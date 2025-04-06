@@ -1,49 +1,81 @@
-import React, { useEffect, useState } from "react";
-import { fetchProducts, trackUserView, fetchRecommendations } from "./api";
+// Basic scaffold for a React Marketplace-style homepage + product view
+// Tailored for personalization later
 
-const userId = "testUser123"; // Temporary User ID
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import './App.css';
+
+// Dummy data import
+import products from './data/amazon_products.json'; // Create this based on Kaggle dataset
 
 function App() {
-  const [products, setProducts] = useState([]);
-  const [recommended, setRecommended] = useState([]);
-
-  useEffect(() => {
-    async function loadProducts() {
-      const productList = await fetchProducts();
-      setProducts(productList);
-      
-      const recommendations = await fetchRecommendations(userId);
-      setRecommended(recommendations);
-    }
-    loadProducts();
-  }, []);
-
-  const handleView = (productId) => {
-    trackUserView(userId, productId);
-  };
-
   return (
-    <div>
-      <h1>Whooga Marketplace</h1>
-      
-      <h2>Recommended for You</h2>
-      <div className="product-list">
-        {recommended.map((product) => (
-          <div key={product._id} onClick={() => handleView(product._id)}>
-            <img src={product.imageUrl} alt={product.name} />
-            <p>{product.name} - ${product.price}</p>
-          </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+function Navbar() {
+  return (
+    <nav className="navbar">
+      <div className="logo">just mockup</div>
+      <input className="search-bar" placeholder="Search products..." />
+      <div className="dropdown">Categories ▼</div>
+    </nav>
+  );
+}
+
+function Home() {
+  return (
+    <div className="home">
+      <Sidebar />
+      <div className="product-grid">
+        {products.slice(0, 12).map((item, index) => (
+          <Link to={`/product/${index}`} key={index} className="product-card">
+            <img src={item.image || 'https://via.placeholder.com/150'} alt={item.title} />
+            <h4>{item.title}</h4>
+            <p>${item.price}</p>
+          </Link>
         ))}
       </div>
+    </div>
+  );
+}
 
-      <h2>All Products</h2>
-      <div className="product-list">
-        {products.map((product) => (
-          <div key={product._id} onClick={() => handleView(product._id)}>
-            <img src={product.imageUrl} alt={product.name} />
-            <p>{product.name} - ${product.price}</p>
-          </div>
-        ))}
+function Sidebar() {
+  const categories = [
+    'All', 'Electronics', 'Fashion', 'Books', 'Home & Kitchen', 'Toys', 'Sports'
+  ];
+
+  return (
+    <aside className="sidebar">
+      {categories.map((cat, idx) => <div key={idx}>{cat}</div>)}
+    </aside>
+  );
+}
+
+function ProductPage() {
+  const { id } = useParams();
+  const product = products[id];
+
+  if (!product) return <div>Product not found</div>;
+
+  return (
+    <div className="product-page">
+      <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} />
+      <div className="details">
+        <h2>{product.title}</h2>
+        <p><strong>Price:</strong> ${product.price}</p>
+        <p><strong>Rating:</strong> {product.rating} ⭐</p>
+        <p>{product.description}</p>
+        <button>Add to Favorites</button>
       </div>
     </div>
   );
