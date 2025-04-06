@@ -1,10 +1,13 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Product = require("../models/Product");
 
-// Fetch all products
-router.get("/", async (req, res) => {
-  const products = await Product.find();
+// Dummy data or connect to DB later
+const products = [
+  { id: 1, title: 'Cool Shirt', price: 25 },
+  { id: 2, title: 'Nice Watch', price: 120 },
+];
+
+router.get('/', (req, res) => {
   res.json(products);
 });
 

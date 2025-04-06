@@ -5,6 +5,12 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 
+useEffect(() => {
+  fetch("http://localhost:5000/api/products")
+    .then(res => res.json())
+    .then(data => console.log(data)); // Replace with state setter later
+}, []);
+
 // Dummy data import
 import products from './data/amazon_products.json'; // Create this based on Kaggle dataset
 

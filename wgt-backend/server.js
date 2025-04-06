@@ -14,6 +14,9 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 });
 
+const productRoutes = require('./routes/productRoutes');
+app.use('/api/products', productRoutes);
+
 const db = mongoose.connection;
 db.once("open", () => console.log("MongoDB connected!"));
 
