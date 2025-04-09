@@ -1,3 +1,5 @@
+#  pip3 install fastapi uvicorn pillow scikit-learn python-multipart 
+# uvicorn main:app --reload  
 import io
 import pickle
 import numpy as np
@@ -26,7 +28,7 @@ async def predict_image(file: UploadFile = File(...)):
         contents = await file.read()
         pil_image = PIL.Image.open(io.BytesIO(contents)).convert('L')
         pil_image = PIL.ImageOps.invert(pil_image)
-        pil_image = pil_image.resize((28, 28), PIL.Image.ANTIALIAS)
+        pil_image = pil_image.resize((28, 28), PIL.Image.LANCZOS)
         img_array = np.array(pil_image).reshape(1, -1)
         prediction = model.predict(img_array)
         return {"prediction": int(prediction[0])}
