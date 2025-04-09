@@ -29,15 +29,39 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <input type = "file" id="imageInput" accept="image/*">
+    <button onclick="uploadImage()">Classify</button>"
+    <p id ="predictionResult"></p>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <script type = "text/javascript">
+      async function uploadImage()
+      {
+        const input = document.getElementById('imageInput')
+        if (!input.files[0])
+        {
+          alert("Please select a file to upload!");
+          return;
+        }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+        const file =  input.files[0]
+        const formData = new FormData();
+        formData.append('file', file)
+
+        try
+        {
+          const response = await fetch('http://127.0.0.1:8000/predict-image/', {
+            method: 'POST',
+            body: formData
+          });
+          const result = await response.json()
+          document.getElementById('predictionResult').textContent = `Prediction: ${result.prediction}`;
+
+        }catch (error) {
+          console.error('Error:', error);
+          alert('Failed')
+        }
+        
+      } 
+    </script>
   </body>
 </html>
