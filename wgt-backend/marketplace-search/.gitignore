@@ -1,0 +1,4 @@
+# Ignore the React app (UI code)
+test-search-ui/
+src/
+.env
